@@ -26,7 +26,10 @@ int main(int argc, char *argv[]) {
 	  uint32_t i, j;
 
     read_data(x, CHANNELS, DATAPOINTS);
-
+    
+    #ifdef TIMING_CSV
+    printf("but,sta,p2p,ape,hur,pow;\r\n");
+    #endif
     for (i = 0; i < CHANNELS; i++) {
         #ifdef VERBOSE
         printf("Running channel %d...\n", i);
@@ -106,8 +109,11 @@ void run_channel(int np, int32_t *x, float *features)
     #ifdef TIMING_ALL
 	  clock_t end_but = clock();
     double time_but = (double)(end_but - begin_but) / CLOCKS_PER_SEC;
+    #ifdef TIMING_CSV
+    printf("%lf,", time_but);
+    #else
     printf("Time but: %lfs\r\n", time_but);
-
+    #endif
     clock_t begin_sta = clock();
 	  #endif
     
@@ -120,8 +126,11 @@ void run_channel(int np, int32_t *x, float *features)
 		#ifdef TIMING_ALL
   	clock_t end_sta = clock();
     double time_sta = (double)(end_sta - begin_sta) / CLOCKS_PER_SEC;
+    #ifdef TIMING_CSV
+    printf("%lf,", time_sta);
+    #else
     printf("Time sta: %lfs\r\n", time_sta);
-
+    #endif
     clock_t begin_p2p = clock();
 	  #endif
     
@@ -134,8 +143,11 @@ void run_channel(int np, int32_t *x, float *features)
 	  #ifdef TIMING_ALL
 	  clock_t end_p2p = clock();
     double time_p2p = (double)(end_p2p - begin_p2p) / CLOCKS_PER_SEC;
-    printf("Time p2p: %lfs\r\n", time_but);
-
+    #ifdef TIMING_CSV
+    printf("%lf,", time_p2p);
+    #else
+    printf("Time p2p: %lfs\r\n", time_p2p);
+    #endif
     clock_t begin_ape = clock();
   	#endif
 
@@ -148,8 +160,11 @@ void run_channel(int np, int32_t *x, float *features)
 	  #ifdef TIMING_ALL
 	  clock_t end_ape = clock();
     double time_ape = (double)(end_ape - begin_ape) / CLOCKS_PER_SEC;
-    printf("Time ape: %lfs\r\n", time_ape);
-
+    #ifdef TIMING_CSV
+    printf("%lf,", time_ape);
+    #else
+    printf("Time p2p: %lfs\r\n", time_ape);
+    #endif
     clock_t begin_hur = clock();
   	#endif
 
@@ -162,8 +177,11 @@ void run_channel(int np, int32_t *x, float *features)
 	  #ifdef TIMING_ALL
 	  clock_t end_hur = clock();
     double time_hur = (double)(end_hur - begin_hur) / CLOCKS_PER_SEC;
+    #ifdef TIMING_CSV
+    printf("%lf,", time_hur);
+    #else
     printf("Time hur: %lfs\r\n", time_hur);
-
+    #endif
     clock_t begin_pow = clock();
   	#endif
 
@@ -176,8 +194,12 @@ void run_channel(int np, int32_t *x, float *features)
 	  #ifdef TIMING_ALL
 	  clock_t end_pow = clock();
     double time_pow = (double)(end_pow - begin_pow) / CLOCKS_PER_SEC;
+    #ifdef TIMING_CSV
+    printf("%lf;\r\n", time_pow);
+    #else
     printf("Time pow: %lfs\r\n", time_pow);
   	#endif
+    #endif
 
     #ifdef VERBOSE
     printf("Channel done\n");

@@ -37,6 +37,9 @@
 //Uncomment to enable timing of each feature and channel
 #define TIMING_ALL
 
+//Uncomment to output timing of each feature and channel in csv
+#define TIMING_CSV
+
 void read_data(int32_t x[CHANNELS][DATAPOINTS], int nc, int np);
 void run_channel(int np, int32_t *x, float *features);
 
