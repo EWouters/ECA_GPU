@@ -31,6 +31,12 @@
 //Uncomment to enable debug printing (in original code printing in the gpu_average function)
 //#define DEBUG
 
+//Uncomment to enable timing of the total runtime
+#define TIMING
+
+//Uncomment to enable timing of each feature and channel
+#define TIMING_ALL
+
 void read_data(int32_t x[CHANNELS][DATAPOINTS], int nc, int np);
 void run_channel(int np, int32_t *x, float *features);
 

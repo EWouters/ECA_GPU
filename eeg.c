@@ -7,6 +7,7 @@
  */
 
 #include "eeg.h"
+#include <time.h>
 
 int32_t randint(int32_t vmin, int32_t vmax)
 {
@@ -14,10 +15,15 @@ int32_t randint(int32_t vmin, int32_t vmax)
 }
 
 int main(int argc, char *argv[]) {
+
+    #ifdef TIMING
+    clock_t begin_tot = clock();
+    #endif
+
     float features[CHANNELS][FEATURE_LENGTH];
     float favg[FEATURE_LENGTH] = {0};
-	int32_t x[CHANNELS][DATAPOINTS];
-	uint32_t i, j;
+    int32_t x[CHANNELS][DATAPOINTS];
+	  uint32_t i, j;
 
     read_data(x, CHANNELS, DATAPOINTS);
 
@@ -36,8 +42,14 @@ int main(int argc, char *argv[]) {
     }
 
     printf("\n");
-	for (i=0; i<FEATURE_LENGTH; i++)
+	  for (i=0; i<FEATURE_LENGTH; i++)
         fprintf(stderr,"Feature %d: %.6f\n", i, favg[i]);
+
+	  #ifdef TIMING
+    clock_t end_tot = clock();
+    double time_spent_tot = (double)(end_tot - begin_tot) / CLOCKS_PER_SEC;
+    printf("Total time: %lfs\r\n", time_spent_tot);
+	  #endif
 
     return 0;
 }
@@ -78,8 +90,12 @@ void read_data(int32_t x[CHANNELS][DATAPOINTS], int nc, int np)
 
 void run_channel(int np, int32_t *x, float *features)
 {
+	  #ifdef TIMING_ALL
+    clock_t begin_but = clock();
+	  #endif
+	  
     // Butterworth returns np + 1 samples
-	int32_t *X = (int32_t *) malloc((np + 1) * sizeof(int32_t));
+	  int32_t *X = (int32_t *) malloc((np + 1) * sizeof(int32_t));
 
     // Clean signal using butterworth
     #ifdef VERBOSE
@@ -87,17 +103,41 @@ void run_channel(int np, int32_t *x, float *features)
     #endif
     bw0_int(np, x, X);
 
-    // 4 features: mean, std dev, abs sum, mean crossings
+    #ifdef TIMING_ALL
+	  clock_t end_but = clock();
+    double time_but = (double)(end_but - begin_but) / CLOCKS_PER_SEC;
+    printf("Time but: %lfs\r\n", time_but);
+
+    clock_t begin_sta = clock();
+	  #endif
+    
+		// 4 features: mean, std dev, abs sum, mean crossings
     #ifdef VERBOSE
     printf("    Standard features...\n");
     #endif
     stafeature(np, X, &features[0]);
+    
+		#ifdef TIMING_ALL
+  	clock_t end_sta = clock();
+    double time_sta = (double)(end_sta - begin_sta) / CLOCKS_PER_SEC;
+    printf("Time sta: %lfs\r\n", time_sta);
 
-    // 2 features: mean p2p, std dev p2p
+    clock_t begin_p2p = clock();
+	  #endif
+    
+		// 2 features: mean p2p, std dev p2p
     #ifdef VERBOSE
     printf("    Peak 2 peak features...\n");
     #endif
     p2p(np, X, &features[4], 7);
+
+	  #ifdef TIMING_ALL
+	  clock_t end_p2p = clock();
+    double time_p2p = (double)(end_p2p - begin_p2p) / CLOCKS_PER_SEC;
+    printf("Time p2p: %lfs\r\n", time_but);
+
+    clock_t begin_ape = clock();
+  	#endif
 
     // 1 feature: aproximate entropy
     #ifdef VERBOSE
@@ -105,17 +145,39 @@ void run_channel(int np, int32_t *x, float *features)
     #endif
     apen(np, X, &features[6], 3, 0.2);
 
+	  #ifdef TIMING_ALL
+	  clock_t end_ape = clock();
+    double time_ape = (double)(end_ape - begin_ape) / CLOCKS_PER_SEC;
+    printf("Time ape: %lfs\r\n", time_ape);
+
+    clock_t begin_hur = clock();
+  	#endif
+
     // 1 feature: hurst coefficient
     #ifdef VERBOSE
     printf("    Hurst Coefficient feature...\n");
     #endif
     hurst(np, X, &features[7]);
 
+	  #ifdef TIMING_ALL
+	  clock_t end_hur = clock();
+    double time_hur = (double)(end_hur - begin_hur) / CLOCKS_PER_SEC;
+    printf("Time hur: %lfs\r\n", time_hur);
+
+    clock_t begin_pow = clock();
+  	#endif
+
     // 6 features: power in 5 frequency bands & total power
     #ifdef VERBOSE
     printf("    Power Spectral Density features...\n");
     #endif
     power_per_band(np, X, &features[8]);
+
+	  #ifdef TIMING_ALL
+	  clock_t end_pow = clock();
+    double time_pow = (double)(end_pow - begin_pow) / CLOCKS_PER_SEC;
+    printf("Time pow: %lfs\r\n", time_pow);
+  	#endif
 
     #ifdef VERBOSE
     printf("Channel done\n");
