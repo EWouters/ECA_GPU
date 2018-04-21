@@ -112,6 +112,9 @@ run:$(EXE)
  
 profile:$(EXE)
 	nvprof --system-profiling on ./$(EXE)
+ 
+nvvp:$(EXE)
+	nvvp ./$(EXE)
 
 $(EXE):$(OBJS)
 	$(CC) $(OBJS) -L $(CUDA_LIB_PATH) -l$(CL_LIBS) $(LDFLAGS) $(EXTRA_LDFLAGS) -o $(EXE)

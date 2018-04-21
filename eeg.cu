@@ -15,6 +15,12 @@ int32_t randint(int32_t vmin, int32_t vmax)
 }
 
 int main(int argc, char *argv[]) {
+	#ifndef CPU_ONLY
+    // dummy function
+    int32_t* dummy;
+    cudaMallocManaged(&dummy, sizeof(int32_t));
+    cudaFree(dummy);
+	#endif
 
     #ifdef TIMING
     clock_t begin_tot = clock();
