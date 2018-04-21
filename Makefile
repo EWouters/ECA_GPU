@@ -42,7 +42,7 @@ CC 				=  g++
 
 # Extra user flags
 EXTRA_NVCCFLAGS ?=
-EXTRA_LDFLAGS   ?=
+EXTRA_LDFLAGS   ?= -lcufft
 #CFLAGS = -O3 -Wall std=gnu99
 CFLAGS=-O3 -Wall
 
@@ -109,7 +109,7 @@ output.txt:$(EXE)
 
 run:$(EXE)
 	./$(EXE)
- 
+
 profile:$(EXE)
 	nvprof --system-profiling on ./$(EXE)
  

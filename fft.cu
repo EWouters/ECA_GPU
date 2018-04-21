@@ -80,12 +80,9 @@ void RToC(int size, int* input, float2* output)
 
 void power_per_band(int32_t N, int32_t (*x), float *p)
 {
-	#ifdef CPU_ONLY
     const int BANDS = 5;
-    float (*xx)[2] = (float(*)[2])  malloc(2 * N * sizeof(float));
-    float (*X)[2] = (float (*)[2]) malloc(2 * N * sizeof(float));
-    int i, j;
     int bands[BANDS + 1];
+    int i, j;
 
     // Delta: <= 4 Hz
     bands[0] = (4 * N) / FS;
@@ -97,6 +94,10 @@ void power_per_band(int32_t N, int32_t (*x), float *p)
     bands[3] = (31 * N) / FS;
     // Gamma: > 31 Hz
     bands[4] = N;
+	
+	#ifdef CPU_ONLY
+    float (*xx)[2] = (float(*)[2])  malloc(2 * N * sizeof(float));
+    float (*X)[2] = (float (*)[2]) malloc(2 * N * sizeof(float));
 
     for (i = 0; i < N; i++) {
         xx[i][0] = (float) x[i];
@@ -104,61 +105,41 @@ void power_per_band(int32_t N, int32_t (*x), float *p)
     }
 
     fft(N, xx, X);
-
+	
+	#else
+    float2 X[N];
+ 	int* device_x;
+ 	cudaMalloc((void**)&device_x, N*sizeof(int));
+ 	cudaMemcpy(device_x , x, N*sizeof(int), cudaMemcpyHostToDevice);
+    float2* device_xx;
+    cudaMalloc((void**)&device_xx, N*sizeof(float2));
+    int thread = 128;
+    int block = N/thread;
+    RToC<<<block, thread>>>(N, device_x, device_xx);
+	cufftHandle plan;
+	cufftPlan1d(&plan, N, CUFFT_C2C, 1);
+	cufftExecC2C(plan, device_xx, device_xx, CUFFT_FORWARD);
+	cudaMemcpy(X , device_xx, N*sizeof(float2), cudaMemcpyDeviceToHost);
+	cufftDestroy(plan);
+	cudaFree(device_xx);
+	#endif
+	
     // Calcuclate power per band
     // Last item (p[BANDS]) is total power
     float pb = 0;
     for (i = 0, j = 0; i < BANDS; i++) {
         float pi = 0;
         for (; j < bands[i]; j++) {
-            pi += power(X[j][0], X[j][1]);
+			#ifdef CPU_ONLY
+				pi += power(X[j][0], X[j][1]);
+			#else
+				pi += power(X[j].x, X[j].y);
+			#endif
         }
         pb += pi;
         p[i] = pi / ((float) (N * N));
     }
     p[BANDS] = pb / ((float) (N * N));
-	
-	#else
-    const int BANDS = 5;
-    int bands[BANDS + 1];
-
-    // Delta: <= 4 Hz
-    bands[0] = (4 * N) / FS;
-    // Theta:  4 < f <= 7 Hz
-    bands[1] = (7 * N) / FS;
-    // Alpha: 7 < f <= 15 Hz
-    bands[2] = (15 * N) / FS;
-    // Beta:   15 < f <= 31 Hz
-    bands[3] = (31 * N) / FS;
-    // Gamma: > 31 Hz
-    bands[4] = N;
-    float2 X[N];
- 	int* x_d;
- 	cudaMalloc((void**)&x_d, N*sizeof(int));
- 	cudaMemcpy(x_d , x, N*sizeof(int), cudaMemcpyHostToDevice);
-    float2* xx_d;
-    cudaMalloc((void**)&xx_d, N*sizeof(float2));
-    int thread = 128;
-    int block = N/thread;
-    RToC<<<block, thread>>>(N, x_d, xx_d);
-	cufftHandle plan1;
-	cufftPlan1d(&plan1, N ,CUFFT_C2C, 1);
-	cufftExecC2C(plan1, xx_d, xx_d, CUFFT_FORWARD);
-	cudaMemcpy(X , xx_d, N*sizeof(float2), cudaMemcpyDeviceToHost);
-	cufftDestroy(plan1);
-	cudaFree(xx_d);
-	float pb = 0;
-    for (int i = 0, j = 0; i < BANDS; i++) {
-        float pi = 0;
-        for (; j < bands[i]; j++) {
-            pi += power(X[j].x, X[j].y);
-        }
-        pb += pi;
-        p[i] = pi / ((float) (N * N));
-    }
-    p[BANDS] = pb / ((float) (N * N));
-
-	#endif
 }
 
 /*

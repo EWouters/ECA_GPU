@@ -58,8 +58,10 @@ int main(int argc, char *argv[]) {
     clock_t end_tot = clock();
     double time_spent_tot = (double)(end_tot - begin_tot) / CLOCKS_PER_SEC;
     printf("Total time: %lfs\r\n", time_spent_tot);
+	  
+	//cuProfilerStop();
 	  #endif
-
+	  
     return 0;
 }
 

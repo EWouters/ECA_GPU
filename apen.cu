@@ -18,7 +18,7 @@ double apen_correlation (int np, int32_t *x, unsigned int m, double r)
                     break;
                 }
             }
-            if (set == false) count=(i==j)?count+1:count+2;
+            if (set == false) count= (i==j) ? count+1 : count+2;
         }
         sum += ((double) count) / ((double) np - m + 1);
     }
@@ -27,7 +27,7 @@ double apen_correlation (int np, int32_t *x, unsigned int m, double r)
 }
 
 __global__
-void gpu_apen_correlation(int32_t *x, double *blocksums, int np, unsigned int m, double r)
+void gpu_apen_correlation(int32_t *device_x, double *blocksums, int np, unsigned int m, double r)
 {
     unsigned int i = blockIdx.y*blockDim.y+threadIdx.y;
     unsigned int j = blockIdx.x*blockDim.x+threadIdx.x;
@@ -41,7 +41,7 @@ void gpu_apen_correlation(int32_t *x, double *blocksums, int np, unsigned int m,
 		counts[index] = 0;
 	else {
     	for (unsigned int k = 0; k < m; k++) {
-        	if (abs(x[i + k] - x[j + k]) > r) {
+        	if (abs(device_x[i + k] - device_x[j + k]) > r) {
             	set = true;
             	break;
             	}
@@ -81,15 +81,15 @@ void apen(int np, int32_t *x, float *a, unsigned int m, double r)
     cudaCheckError(err);
     double* device_blocksums;
     err=cudaMalloc(&device_blocksums, GRID_SIZE*GRID_SIZE*sizeof(double));  
-    cudaCheckError(err);  
-    err=cudaMemcpy(device_x,x, np*sizeof(int32_t), cudaMemcpyHostToDevice);
+    cudaCheckError(err);
+    err=cudaMemcpy(device_x, x, np*sizeof(int32_t), cudaMemcpyHostToDevice);
     cudaCheckError(err);
     gpu_apen_correlation<<<dimGrid, dimBlock>>>(device_x, device_blocksums, np, m, r);
     //cudaCheckError(cudaPeekAtLastError()); 
     double blocksums[GRID_SIZE*GRID_SIZE];
     err=cudaMemcpy(blocksums, device_blocksums, GRID_SIZE*GRID_SIZE*sizeof(double), cudaMemcpyDeviceToHost); 
     cudaCheckError(err);
-    err=cudaFree(device_blocksums);//only free blocksums for we still use device_x later
+    err=cudaFree(device_blocksums);
     cudaCheckError(err);
     int idxi;
     double sum = 0;
@@ -98,13 +98,13 @@ void apen(int np, int32_t *x, float *a, unsigned int m, double r)
     }
     err=cudaMalloc(&device_blocksums, GRID_SIZE*GRID_SIZE*sizeof(double));  
     cudaCheckError(err); 
-    gpu_apen_correlation<<<dimGrid, dimBlock>>>(device_x, device_blocksums, np, m+1, r);
+    gpu_apen_correlation<<<dimGrid, dimBlock>>>(device_x, device_blocksums, np, m + 1, r);
     //cudaCheckError(cudaPeekAtLastError()); 
     err=cudaMemcpy(blocksums, device_blocksums, GRID_SIZE*GRID_SIZE*sizeof(double), cudaMemcpyDeviceToHost); 
     cudaCheckError(err);
-    err=cudaFree(device_x);//free device_x
+    err=cudaFree(device_x);
     cudaCheckError(err);
-    err=cudaFree(device_blocksums);//only free blocksums for we still use device_x later
+    err=cudaFree(device_blocksums);
     cudaCheckError(err);
     double sum2 = 0;
     for(idxi=0;idxi<GRID_SIZE*GRID_SIZE;idxi++){
