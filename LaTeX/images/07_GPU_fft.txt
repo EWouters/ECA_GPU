@@ -1,0 +1,89 @@
+but,sta,p2p,ape,hur,pow;
+0.000464,0.001226,0.000281,0.000979,0.001500,0.198508;
+0.000410,0.000863,0.000263,0.000742,0.001394,0.003469;
+0.000887,0.001479,0.000415,0.000742,0.001353,0.002523;
+0.000432,0.000864,0.000268,0.000737,0.001722,0.002634;
+0.000425,0.000859,0.000274,0.000742,0.001369,0.002784;
+0.000425,0.000889,0.000335,0.000815,0.001752,0.003021;
+0.000535,0.001001,0.000345,0.000815,0.001764,0.002918;
+0.000534,0.000989,0.000340,0.000801,0.001756,0.003119;
+0.000487,0.001203,0.000308,0.001049,0.001815,0.003026;
+0.000528,0.000990,0.000351,0.000807,0.001756,0.002689;
+0.000510,0.000968,0.000317,0.000797,0.001671,0.002683;
+0.000533,0.000976,0.000318,0.000806,0.001765,0.002722;
+0.000536,0.000998,0.000334,0.000800,0.001674,0.002959;
+0.000528,0.001000,0.000349,0.000807,0.001764,0.003504;
+0.000524,0.000994,0.000350,0.000813,0.001758,0.003003;
+0.000534,0.000970,0.000330,0.000797,0.001612,0.002768;
+0.000408,0.001100,0.000252,0.000996,0.001349,0.002644;
+0.000539,0.000978,0.000321,0.000809,0.001764,0.002716;
+0.000535,0.000982,0.000340,0.000807,0.001619,0.002968;
+0.000571,0.000989,0.000337,0.000812,0.001759,0.002716;
+0.000508,0.000979,0.000342,0.000815,0.001701,0.002957;
+0.000511,0.000952,0.000324,0.000794,0.001673,0.002940;
+0.000510,0.000947,0.000321,0.000818,0.001671,0.002988;
+
+Feature 0: -0.120867
+Feature 1: 37.755878
+Feature 2: 648779.812500
+Feature 3: 18188.429688
+Feature 4: 73.820732
+Feature 5: 95.777206
+Feature 6: 0.017985
+Feature 7: 0.518259
+Feature 8: 38.066723
+Feature 9: 46.835285
+Feature 10: 75.471153
+Feature 11: 439.958221
+Feature 12: 745.191406
+Feature 13: 1345.522827
+Total time: 0.655432s
+==8720== Profiling application: ./eeg
+==8720== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 26.14%  1.7289ms        69  25.056us  24.735us  25.343us  [CUDA memcpy HtoD]
+ 21.68%  1.4338ms        46  31.168us  30.831us  31.564us  gpu_apen_correlation(int*, double*, int, unsigned int, double)
+ 20.64%  1.3651ms       115  11.870us  3.4240us  45.023us  [CUDA memcpy DtoH]
+ 10.97%  725.69us        23  31.551us  31.405us  32.123us  gpu_abssum(int*, int*)
+ 10.81%  715.20us        23  31.095us  30.797us  33.054us  gpu_average(int*, int*)
+  4.74%  313.18us        23  13.616us  13.217us  13.899us  void spRadix0256B::kernel3Mem<unsigned int, float, fftDirection_t=-1, unsigned int=16, unsigned int=2, L1, ALL, WRITEBACK>(kernel_parameters_t<fft_mem_radix3_t, unsigned int, float>)
+  3.62%  239.69us        23  10.421us  9.4160us  13.405us  void spRadix0128B::kernel1Mem<unsigned int, float, fftDirection_t=-1, unsigned int=16, unsigned int=4, L1, ALL, WRITEBACK>(kernel_parameters_t<fft_mem_radix1_t, unsigned int, float>)
+  1.39%  92.190us        23  4.0080us  3.5510us  4.9440us  RToC(int, int*, float2*)
+
+==8720== System profiling result:
+Device "GeForce GTX 570 (0)"
+                         Count         Avg         Min         Max
+     Temperature (C)        16       39.69       38.00       41.00
+             Fan (%)         8       85.00       85.00       85.00
+Device "GeForce GTX 570 (1)"
+                         Count         Avg         Min         Max
+     Temperature (C)        16       34.50       34.00       35.00
+             Fan (%)         8       85.00       85.00       85.00
+Device "GeForce GTX 570 (2)"
+                         Count         Avg         Min         Max
+     Temperature (C)        16       34.00       34.00       34.00
+             Fan (%)         8       85.00       85.00       85.00
+
+==8720== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 59.99%  203.56ms       208  978.67us     658ns  191.04ms  cudaFree
+ 24.61%  83.492ms         1  83.492ms  83.492ms  83.492ms  cudaMallocManaged
+  4.66%  15.804ms       207  76.346us  7.0060us  263.66us  cudaMalloc
+  4.66%  15.802ms        23  687.04us  633.08us  822.73us  cudaGetDeviceProperties
+  3.03%  10.287ms       184  55.908us  19.599us  185.97us  cudaMemcpy
+  1.65%  5.6049ms       498  11.254us     109ns  1.0755ms  cuDeviceGetAttribute
+  0.67%  2.2661ms       161  14.074us  6.8920us  35.383us  cudaLaunch
+  0.28%  939.01us         6  156.50us  72.008us  381.48us  cuDeviceTotalMem
+  0.18%  614.39us         6  102.40us  63.988us  263.26us  cuDeviceGetName
+  0.14%  491.42us       736     667ns     409ns  3.8510us  cudaFuncSetCacheConfig
+  0.06%  189.38us       161  1.1760us     259ns  6.5230us  cudaGetDevice
+  0.04%  119.19us       437     272ns     137ns  7.6860us  cudaSetupArgument
+  0.03%  86.201us       161     535ns     240ns  1.5570us  cudaConfigureCall
+  0.01%  17.756us        46     386ns     161ns     796ns  cudaPeekAtLastError
+  0.00%  13.210us        46     287ns     207ns     536ns  cudaGetLastError
+  0.00%  7.3710us         3  2.4570us  2.2990us  2.5470us  cuDeviceGetPCIBusId
+  0.00%  2.6510us         9     294ns     152ns     952ns  cuDeviceGet
+  0.00%  1.3710us         3     457ns     245ns     868ns  cuDeviceGetCount
+  0.00%  1.0830us         1  1.0830us  1.0830us  1.0830us  cuInit
+  0.00%     760ns         1     760ns     760ns     760ns  cuDriverGetVersion
+==8720== Warning: Some profiling data are not recorded. Make sure cudaProfilerStop() or cuProfilerStop() is called before application exit to flush profile data.

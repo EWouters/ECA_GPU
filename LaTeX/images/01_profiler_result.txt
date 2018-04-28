@@ -1,0 +1,49 @@
+==3589== NVPROF is profiling process 3589, command: ./eeg
+Feature 0: 0.000000
+Feature 1: 36.837456
+Feature 2: 6224.142578
+Feature 3: 142.642853
+Feature 4: 104.729141
+Feature 5: 80.059616
+Feature 6: 0.011738
+Feature 7: 0.342995
+Feature 8: 94.593994
+Feature 9: 42.762974
+Feature 10: 138.442657
+Feature 11: 479.108002
+Feature 12: 1139.541504
+Feature 13: 1894.449097
+==3589== Profiling application: ./eeg
+==3589== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 71.63%  77.822us        23  3.3830us  3.3280us  3.5200us  [CUDA memcpy DtoH]
+ 28.37%  30.816us        23  1.3390us  1.3120us  1.4080us  [CUDA memcpy HtoD]
+
+==3589== System profiling result:
+Device "GeForce GTX 570 (0)"
+                         Count         Avg         Min         Max
+     Temperature (C)         3       38.33       38.00       39.00
+             Fan (%)         2       85.00       85.00       85.00
+Device "GeForce GTX 570 (1)"
+                         Count         Avg         Min         Max
+     Temperature (C)         3       34.00       34.00       34.00
+             Fan (%)         2       85.00       85.00       85.00
+Device "GeForce GTX 570 (2)"
+                         Count         Avg         Min         Max
+     Temperature (C)         3       34.00       34.00       34.00
+             Fan (%)         2       85.00       85.00       85.00
+
+==3589== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 91.21%  89.397ms        46  1.9434ms  4.9870us  85.592ms  cudaMalloc
+  3.58%  3.5111ms       249  14.100us     193ns  1.2619ms  cuDeviceGetAttribute
+  3.38%  3.3132ms        46  72.026us  4.1620us  180.79us  cudaFree
+  0.96%  936.38us        46  20.356us  11.609us  31.334us  cudaMemcpy
+  0.57%  561.84us         3  187.28us  97.709us  365.31us  cuDeviceTotalMem
+  0.24%  233.89us         3  77.962us  74.462us  83.425us  cuDeviceGetName
+  0.02%  19.206us        46     417ns     137ns  4.2120us  cudaSetupArgument
+  0.02%  18.892us        23     821ns     547ns  1.7210us  cudaLaunch
+  0.02%  15.129us        23     657ns     434ns  1.8340us  cudaConfigureCall
+  0.01%  7.4870us         3  2.4950us  2.3970us  2.5860us  cuDeviceGetPCIBusId
+  0.00%  2.1480us         6     358ns     167ns     929ns  cuDeviceGet
+  0.00%  1.1590us         2     579ns     288ns     871ns  cuDeviceGetCount

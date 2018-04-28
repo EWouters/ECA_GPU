@@ -1,0 +1,38 @@
+eca18086@co13:~/ECA_GPU$ nvprof ./eeg
+==26100== NVPROF is profiling process 26100, command: ./eeg
+
+Feature 0: -0.120867
+Feature 1: 37.755878
+Feature 2: 648779.812500
+Feature 3: 18188.429688
+Feature 4: 73.820732
+Feature 5: 95.777206
+Feature 6: 1.701429
+Feature 7: 0.518259
+Feature 8: 38.066727
+Feature 9: 46.835285
+Feature 10: 75.471153
+Feature 11: 439.958252
+Feature 12: 745.191589
+Feature 13: 1345.522949
+==26100== Profiling application: ./eeg
+==26100== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 52.99%  734.09us        23  31.917us  31.800us  33.079us  gpu_average(int*, int*)
+ 41.31%  572.34us        23  24.884us  24.640us  25.183us  [CUDA memcpy HtoD]
+  5.70%  78.943us        23  3.4320us  3.3920us  3.6160us  [CUDA memcpy DtoH]
+
+==26100== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 87.95%  80.418ms        46  1.7482ms  138.30us  72.505ms  cudaMalloc
+  6.41%  5.8634ms        46  127.47us  108.10us  169.20us  cudaFree
+  2.52%  2.3078ms        46  50.169us  47.394us  70.843us  cudaMemcpy
+  1.88%  1.7176ms       249  6.8980us     110ns  267.48us  cuDeviceGetAttribute
+  0.76%  692.23us        23  30.097us  28.814us  30.704us  cudaLaunch
+  0.22%  201.51us         3  67.171us  66.675us  67.554us  cuDeviceTotalMem
+  0.18%  166.39us         3  55.462us  53.077us  59.877us  cuDeviceGetName
+  0.03%  30.877us        23  1.3420us  1.1780us  1.8780us  cudaConfigureCall
+  0.02%  22.128us        46     481ns     138ns  3.5100us  cudaSetupArgument
+  0.01%  11.513us        23     500ns     459ns     738ns  cudaPeekAtLastError
+  0.00%  1.2100us         2     605ns     314ns     896ns  cuDeviceGetCount
+  0.00%  1.1410us         6     190ns     130ns     240ns  cuDeviceGet
